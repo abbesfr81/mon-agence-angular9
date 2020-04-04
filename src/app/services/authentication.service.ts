@@ -15,7 +15,6 @@ export class AuthenticationService {
         firebase.auth().signInWithEmailAndPassword(email, password)
           .then(
             () => {
-              console.log('connecté');
               resolve();
             }
           ).catch(
@@ -25,5 +24,9 @@ export class AuthenticationService {
            );
       }
     );
+  }
+
+  signOutUser() {
+    firebase.auth().signOut();
   }
 }

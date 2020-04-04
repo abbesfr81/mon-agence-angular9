@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {Property} from '../interfaces/property';
-
+import * as firebase from 'firebase';
 @Injectable({
   providedIn: 'root'
 })
@@ -11,10 +11,20 @@ export class PropertiesService {
 
   }
 
-  properties: Property[];
+  properties: Property[] = [];
 
+  saveProperties() {
+    firebase.database().ref('/properties').set(this.properties);
+  }
   emitProperties() {
     this.propertiesSubject.next(this.properties);
+  }
+
+  getProperties() {
+    firebase.database().ref('/properties').on('value', (data) => {
+      this.properties = data.val() ? data.val() : [];
+      this.emitProperties();
+    });
   }
   // ON A PAS BESOIN DE CETTE FONCTION , ON A INTRODUIT LA SUBSCRIPTION DE RXJS,
   // emitProperties qui va nous envoyer les donnees
@@ -33,19 +43,61 @@ export class PropertiesService {
 
   createProperty(property: Property) {
     this.properties.push(property);
+    this.saveProperties();
+    this.emitProperties();
   }
   deleteProperty(index) {
-    console.log( this.properties);
+
     this.properties.splice( index, 1);
-    console.log( this.properties);
+    this.saveProperties();
     this.emitProperties();
   }
 
-  updateProperty(property, index) {
+  // 1 ere façon de faire
+  updateProperty2(property, index) {
     this.properties[index] = property;
+    this.saveProperties();
     this.emitProperties();
   }
+  // 2 eme façon de faire
+  updateProperty(property, index) {
+    // on a pas besoin de executer emitProperties car dans getProperties() on a utilise .on qui detecte automatiquemet les modification
+    // et :
+    // this.properties = data.val() ? data.val() : [];
+    // this.emitProperties();
+    // seront execuetes automatiquement.
+    firebase.database().ref('/properties/' + index).update(property).catch(
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
 
+  updateFile(file: File) {
+    return new Promise(
+      (resolve, reject) => {
+        const uniqueId = Date.now().toString();
+        const fileName = uniqueId + file.name;
+        const upload = firebase.storage().ref().child('images/properties/' + fileName).put(file);
+        upload.on(firebase.storage.TaskEvent.STATE_CHANGED,
+          () => {
+            console.log('Chargement ....');
+          },
+          (error) => {
+            console.log(error);
+          },
+          () => {
+            upload.snapshot.ref.getDownloadURL().then(
+              (downloadUrl) => {
+                  resolve(downloadUrl);
+              }
+            );
+          }
+          );
+
+      }
+    );
+  }
 /*  getPropertiesObservable() {
     return new Observable(
       observer => {

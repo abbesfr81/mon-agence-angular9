@@ -4,6 +4,7 @@ import {PropertiesService} from '../../services/properties.service';
 import {Subscription} from 'rxjs';
 import * as $ from 'jquery';
 import {Property} from '../../interfaces/property';
+
 @Component({
   selector: 'app-admin-properties',
   templateUrl: './admin-properties.component.html',
@@ -18,6 +19,11 @@ export class AdminPropertiesComponent implements OnInit {
   indexToUpdate;
 
   editMode = false;
+
+  photoUploading = false;
+  photoUploaded = false;
+  photoUrl: string;
+
   constructor(private formBuilder: FormBuilder, private propertiesService: PropertiesService) {
 
   }
@@ -29,7 +35,9 @@ export class AdminPropertiesComponent implements OnInit {
         this.properties = data;
       }
     );
+    this.propertiesService.getProperties();
     this.propertiesService.emitProperties();
+
   }
 
   initPropertiedForm() {
@@ -47,7 +55,9 @@ export class AdminPropertiesComponent implements OnInit {
   onSubmitPropertiesForm() {
 
     const newProperty: Property = this.propertiesForm.value;
+    newProperty.photo = this.photoUrl ? this.photoUrl : '';
     if (this.editMode) {
+      newProperty.sold = this.propertiesForm.get('sold').value ?  this.propertiesForm.get('sold').value : false;
       this.propertiesService.updateProperty(newProperty, this.indexToUpdate);
     } else {
       this.propertiesService.createProperty(newProperty);
@@ -59,6 +69,7 @@ export class AdminPropertiesComponent implements OnInit {
   resetForm() {
     this.propertiesForm.reset();
     this.editMode = false;
+    this.photoUrl = '';
   }
 
   onDeleteProperties(index) {
@@ -83,7 +94,7 @@ export class AdminPropertiesComponent implements OnInit {
     this.propertiesForm.get('description').setValue(property.description);
     this.propertiesForm.get('sold').setValue(property.sold);
     this.propertiesForm.get('price').setValue(property.price);
-
+    this.photoUrl = property.photo ? property.photo : '';
     const index = this.properties.findIndex(
       (propertyEl) => {
         if (propertyEl === property) {
@@ -93,5 +104,19 @@ export class AdminPropertiesComponent implements OnInit {
     );
     this.indexToUpdate = index;
     this.editMode = true;
+  }
+
+  onUploadFile(event) {
+    this.photoUploading = true;
+    this.propertiesService.updateFile(event.target.files[0]).then(
+      (url: string) => {
+          this.photoUrl = url;
+          this.photoUploading = false;
+          this.photoUploaded = true;
+          setTimeout( () => {
+            this.photoUploaded = true;
+          }, 5000);
+      }
+    );
   }
 }
