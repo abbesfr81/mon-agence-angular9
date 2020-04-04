@@ -1,0 +1,115 @@
+<div class="rounded shadow bg-white p-5">
+  <div class="row">
+    <div class="col-12 d-flex">
+      <h2 class="font-weight-light"><i class="fas fa-home"></i> Biens immobiliers</h2>
+      <button class="btn btn-primary ml-auto" type="button" data-toggle="modal" data-target="#propertiesFormModal" (click)="resetForm()"><i class="fas fa-plus"></i>Ajouter un bien</button>
+    </div>
+  </div>
+  <hr class="mt-1 mb-5 bg-dark">
+  <div class="row">
+    <div *ngFor="let property of properties; let i = index" class="col-12 shadow-sm p-4 mb-3 bg-light">
+      <div class="d-flex">
+        <h3 class="font-weight-normal">{{ property.title }}</h3>
+        <div class="m1-auto">
+          <button class="btn- btn-primary m-1" type="button"> <i class="fas fa-edit" (click)="onEditProperty(property)"></i></button>
+          <button class="btn- btn-danger m-1" type="button" (click)="onDeleteProperties(i)"> <i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+      <p> {{ property.category }} <span *ngIf="property.surface && property.surface !== ''" >de {{ property.surface }}</span > <span *ngIf="property.rooms && property.room !== '' " > , {{ property.rooms }} pieces </span></p>
+      <p *ngIf="property.price && property.price !== '' ">
+        {{ property.price}} m2
+      </p>
+      <p>
+        <span *ngIf="property.sold" class="text-success">Vendu</span>
+        <span *ngIf="!property.sold" class="text-danger">A vendre</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="propertiesFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <!-- cette form c'est la methode template-->
+      <!--   <form #propertiesForm="ngForm" (ngSubmit)="onSubmitPropertiesForm(propertiesForm)"> -->
+
+      <!-- La methode reactive -->
+      <form [formGroup]="propertiesForm"  (ngSubmit)="onSubmitPropertiesForm()">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle"> Edition d'un bien</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Titre" formControlName="title"  >
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect01">Categorie</label>
+              </div>
+              <select class="custom-select" id="inputGroupSelect01" formControlName="category" >
+                <option value="Appartement">Appartement</option>
+                <option value="Maison">Maison</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-6">
+                <input type="text" class="form-control" placeholder="Surface m" formControlName="surface" >
+              </div>
+
+            </div>
+            <div class="form-row">
+              <div class="form-group col-6">
+                <input type="text" class="form-control" placeholder="Nombre de pieces" formControlName="rooms" >
+              </div>
+            </div>
+            <div class="form-group">
+              <textarea class="form-control w-10" name="" id="" cols="30" rows="4" formControlName="description"  placeholder="Description du bien">
+
+              </textarea>
+            </div>
+            <div class="form-group">
+              <input type="text" placeholder="prix" class="form-control" formControlName="price" >
+            </div>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="customSwitch1" formControlName="sold">
+              <label class="custom-control-label" for="customSwitch1">
+                <span class="text-success" *ngIf="propertiesForm.value.sold" >Vendu ?</span>
+                <span class="text-danger"  *ngIf="!propertiesForm.value.sold" >A vendre</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-primary" [disabled]="propertiesForm.invalid">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<!-- Modal suppression propertie -->
+<div class="modal fade" id="deletePropertyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Supprimer bien</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary" (click)="onConfirmDeleteProperty()">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>
