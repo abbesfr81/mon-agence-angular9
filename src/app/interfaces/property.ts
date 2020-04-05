@@ -8,6 +8,6 @@ export interface Property {
   description?: string;
   price: string;
   sold: string;
-  photo?: string;
+  photos?: any[];
 
 }

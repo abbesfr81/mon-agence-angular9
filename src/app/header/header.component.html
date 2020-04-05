@@ -8,7 +8,7 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="#" >Accuille </a>
+        <a class="nav-link" [routerLink]="['/home']" >Accuille </a>
       </li>
       <li class="nav-item" >
         <a class="nav-link" href="#">Link</a>
@@ -18,7 +18,7 @@
           Administration
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Tableau de bord</a>
+          <a class="dropdown-item" [routerLink]="['/admin','dashboard']" >Tableau de bord</a>
 
           <div class="dropdown-divider"></div>
           <a class="dropdown-item text-danger"  href="#" (click)="onSignOut()">Déconnection</a>
