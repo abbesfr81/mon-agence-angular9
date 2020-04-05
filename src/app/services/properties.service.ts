@@ -98,6 +98,21 @@ export class PropertiesService {
       }
     );
   }
+
+  removeFile(fileLink: string) {
+    if(fileLink) {
+      const storageRef = firebase.storage().refFromURL(fileLink);
+      storageRef.delete().then(
+        () => {
+          console.log('photo deleted');
+        }
+      ).catch(
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+  }
 /*  getPropertiesObservable() {
     return new Observable(
       observer => {
