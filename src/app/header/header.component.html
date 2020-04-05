@@ -11,7 +11,7 @@
         <a class="nav-link" [routerLink]="['/home']" >Accuille </a>
       </li>
       <li class="nav-item" >
-        <a class="nav-link" href="#">Link</a>
+        <a class="nav-link" *ngIf="!isLoggedIn" [routerLink]="['/login']" >login</a>
       </li>
       <li class="nav-item dropdown" *ngIf="isDisabled">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

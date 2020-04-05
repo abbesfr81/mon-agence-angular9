@@ -1,6 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {PropertiesService} from '../services/properties.service';
 import {Subject, Subscription} from 'rxjs';
+import {PROPERTY} from 'codelyzer/util/isHiddenFromScreenReader';
+import {Property} from '../interfaces/property';
 
 @Component({
   selector: 'app-home',
@@ -8,7 +10,8 @@ import {Subject, Subscription} from 'rxjs';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-
+  properties: Property[];
+  propertiesSubscription: Subscription;
   constructor(private propertiesService: PropertiesService) {
   }
 
@@ -27,9 +30,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 */
-  sold = true;
-  properties = [] ;
-  propertiesSubscription: Subscription;
+
+
 
   ngOnInit(): void {
     this.propertiesSubscription =  this.propertiesService.propertiesSubject.subscribe(
@@ -37,6 +39,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.properties = data;
       }
     );
+    this.propertiesService.getProperties();
     this.propertiesService.emitProperties();
   }
 
@@ -50,5 +53,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.propertiesSubscription.unsubscribe();
+  }
+
+  onGoToSingleProperty(index) {
+
   }
 }
